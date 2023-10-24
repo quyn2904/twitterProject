@@ -1,36 +1,25 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { RegisterReqBody } from '~/models/requests/User.requests'
 import usersService from '~/services/users.services'
 import { ParamsDictionary } from 'express-serve-static-core'
 
-export const loginController = (req: Request, res: Response) => {
-  const { email, password } = req.body
-  if (email === 'admin@gmail.com' && password === '123456') {
-    return res.json({
-      message: 'Login successfully',
-      result: [
-        { name: 'Điệp', yob: 1999 },
-        { name: 'Hùng', yob: 2004 },
-        { name: 'Được', yob: 1994 }
-      ]
-    })
-  }
-  return res.status(401).json({
-    error: 'Wrong email or password'
+export const loginController = async (req: Request, res: Response) => {
+  // lấy user_id từ user của req
+  const { user }: any = req
+  const user_id = user._id // user._id là object id lấy từ mongodb
+  // dùng user_id để tạo access_token và refresh_token
+  const result = await usersService.login(user_id.toString())
+  // res về access_token và refresh_token cho client
+  res.json({
+    message: 'Login successfully',
+    result
   })
 }
 
 export const registerController = async (req: Request<ParamsDictionary, any, RegisterReqBody>, res: Response) => {
-  try {
-    const result = await usersService.register(req.body)
-    res.json({
-      message: 'Register successfully',
-      result
-    })
-  } catch (error) {
-    return res.status(500).json({
-      message: 'Register failed',
-      error
-    })
-  }
+  const result = await usersService.register(req.body)
+  res.json({
+    message: 'Register successfully',
+    result
+  })
 }

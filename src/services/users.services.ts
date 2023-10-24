@@ -15,11 +15,17 @@ class UsersService {
       options: { expiresIn: process.env.ACCESS_TOKEN_EXPIRE_IN }
     })
   }
+
   signRefreshToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.AccessToken },
       options: { expiresIn: process.env.REFRESH_TOKEN_EXPIRE_IN }
     })
+  }
+
+  // ký refresh_token và access_token
+  private signAccessAndRefreshToken(user_id: string) {
+    return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
   }
 
   // viết hàm nhận vào user_id để bỏ vào payload và tạo refresh token
@@ -36,10 +42,13 @@ class UsersService {
 
     // lấy user_id từ user mới tạo
     const user_id = result.insertedId.toString()
-    const [access_token, refresh_token] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefreshToken(user_id)
-    ])
+    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
+    return { access_token, refresh_token }
+  }
+
+  async login(user_id: string) {
+    // dùng user_id để tạo access_token và refresh_token
+    const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
     return { access_token, refresh_token }
   }
 }
