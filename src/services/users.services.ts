@@ -1,3 +1,4 @@
+import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import User from '~/models/schemas/User.schema'
 import databaseService from './database.services'
 import { RegisterReqBody } from '~/models/requests/User.requests'
@@ -5,6 +6,8 @@ import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType } from '~/constants/enums'
 import { config } from 'dotenv'
+import { ObjectId } from 'mongodb'
+import { USERS_MESSAGES } from '~/constants/messages'
 config()
 
 class UsersService {
@@ -43,13 +46,26 @@ class UsersService {
     // lấy user_id từ user mới tạo
     const user_id = result.insertedId.toString()
     const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
+    // lưu refresh_token vào db
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ token: refresh_token, user_id: new ObjectId(user_id) })
+    )
     return { access_token, refresh_token }
   }
 
   async login(user_id: string) {
     // dùng user_id để tạo access_token và refresh_token
     const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
+    // lưu refresh_token vào db
+    await databaseService.refreshTokens.insertOne(
+      new RefreshToken({ token: refresh_token, user_id: new ObjectId(user_id) })
+    )
     return { access_token, refresh_token }
+  }
+
+  async logout(refresh_token: string) {
+    await databaseService.refreshTokens.deleteOne({ token: refresh_token })
+    return { message: USERS_MESSAGES.LOGOUT_SUCCESS }
   }
 }
 

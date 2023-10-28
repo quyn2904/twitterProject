@@ -1,7 +1,12 @@
 import { wrapAsync } from './../utils/handlers'
 import { NextFunction, Router } from 'express'
-import { loginController, registerController } from '~/controllers/users.controllers'
-import { loginValidator, registerValidator } from '~/middlewares/users.middlewares'
+import { loginController, logoutController, registerController } from '~/controllers/users.controllers'
+import {
+  accessTokenValidator,
+  loginValidator,
+  refreshTokenValidator,
+  registerValidator
+} from '~/middlewares/users.middlewares'
 const usersRouter = Router()
 // usersRouter.use(loginValidator)
 // nếu để như này thì bất cứ khi nào mình truy cập vào usersRouter đều phải chạy loginValidator
@@ -12,7 +17,7 @@ path: /users/login
 method: GET
 body: {email, password}
 */
-usersRouter.get('/login', loginValidator, loginController)
+usersRouter.get('/login', loginValidator, wrapAsync(loginController))
 
 /*
 des: đăng ký
@@ -35,5 +40,7 @@ usersRouter.post('/register', registerValidator, wrapAsync(registerController))
 //   console.log('error handler nè:')
 //   res.status(400).json({ message: err.message })
 // }
+
+usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapAsync(logoutController))
 
 export default usersRouter
