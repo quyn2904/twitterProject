@@ -28,11 +28,19 @@ class UsersService {
     })
   }
 
-  private signEmailToken(user_id: string) {
+  private signEmailVerifyToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.EmailVerificationToken },
       options: { expiresIn: process.env.EMAIL_VERIFY_TOKEN_EXPIRE_IN },
       privateKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+    })
+  }
+
+  private signForgotPasswordToken(user_id: string) {
+    return signToken({
+      payload: { user_id, token_type: TokenType.ForgotPasswordToken },
+      options: { expiresIn: process.env.FORGOT_PASSWORD_TOKEN_EXPIRE_IN },
+      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
     })
   }
 
@@ -50,7 +58,7 @@ class UsersService {
 
   async register(payload: RegisterReqBody) {
     const user_id = new ObjectId()
-    const email_verify_token = await this.signEmailToken(user_id.toString())
+    const email_verify_token = await this.signEmailVerifyToken(user_id.toString())
     const result = await databaseService.users.insertOne(
       new User({
         _id: user_id,
@@ -111,6 +119,40 @@ class UsersService {
       new RefreshToken({ token: refresh_token, user_id: new ObjectId(user_id) })
     )
     return { access_token, refresh_token }
+  }
+
+  async resendEmailVerify(user_id: string) {
+    // tạo ra email_verify_token
+    const email_verify_token = await this.signEmailVerifyToken(user_id)
+    // update lại user
+    await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+      {
+        $set: {
+          email_verify_token,
+          updated_at: '$$NOW'
+        }
+      }
+    ])
+    // giả lập gửi mail
+    console.log(email_verify_token)
+    return { message: USERS_MESSAGES.RESEND_EMAIL_VERIFY_SUCCESS }
+  }
+
+  async forgotPassword(user_id: string) {
+    // tạo ra forgot_password_token
+    const forgot_password_token = await this.signForgotPasswordToken(user_id)
+    // update lại user
+    await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
+      {
+        $set: {
+          forgot_password_token,
+          updated_at: '$$NOW'
+        }
+      }
+    ])
+    // giả lập gửi mail
+    console.log(forgot_password_token)
+    return { message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD }
   }
 }
 

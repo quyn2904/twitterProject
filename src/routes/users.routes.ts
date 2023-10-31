@@ -2,16 +2,21 @@ import { wrapAsync } from './../utils/handlers'
 import { NextFunction, Router } from 'express'
 import {
   emailVerifyTokenController,
+  forgotPasswordController,
   loginController,
   logoutController,
-  registerController
+  registerController,
+  resendEmailVerifyController,
+  verifyForgotPasswordTokenController
 } from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
   emailVerifyTokenValidator,
+  forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
-  registerValidator
+  registerValidator,
+  verifyForgotPasswordTokenValidator
 } from '~/middlewares/users.middlewares'
 const usersRouter = Router()
 // usersRouter.use(loginValidator)
@@ -62,5 +67,40 @@ method: POST
 body: {email_verify_token: string} 
 */
 usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapAsync(emailVerifyTokenController))
+
+/*
+des: resend email verify token
+khi mail thất lạc, hoặc email_verify_token hết hạn
+thì người dùng có thể gửi lại email_verify_token
+
+method: POST
+path: /users/resend-verify-email
+header: {Authorization: Bearer <access_token>} //đăng nhập mới đưuọc resend
+body: {}
+*/
+usersRouter.post('/resend-verify-email', accessTokenValidator, wrapAsync(resendEmailVerifyController))
+
+/*
+des: khi người dùng quên mật khẩu, thì họ có thể gửi email lên server để tạo cho họ forgot_password_token
+path: /users/forgot-password
+method: POST
+body: {email: string}
+*/
+usersRouter.post('/forgot-password', forgotPasswordValidator, wrapAsync(forgotPasswordController))
+
+/*
+des: khi người dùng nhấp vào link trong mail để reset password
+họ sẽ gửi 1 req kèm theo forgot_password_token lên server
+server sẽ kiểm tra forgot_password_token có hợp lệ hay không?
+sau đó chuyển hướng người dùng đến trang reset password
+path: /users/verify-forgot-password
+method: POST
+body: {forgot_password_token: string}
+*/
+usersRouter.post(
+  '/verify-forgot-password',
+  verifyForgotPasswordTokenValidator,
+  wrapAsync(verifyForgotPasswordTokenController)
+)
 
 export default usersRouter
