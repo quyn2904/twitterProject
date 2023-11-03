@@ -28,7 +28,7 @@ path: /users/login
 method: GET
 body: {email, password}
 */
-usersRouter.get('/login', loginValidator, wrapAsync(loginController))
+usersRouter.post('/login', loginValidator, wrapAsync(loginController))
 
 /*
 des: đăng ký

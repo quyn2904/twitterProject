@@ -1,11 +1,23 @@
 import express, { NextFunction, Request, Response } from 'express'
 import usersRouter from './routes/users.routes'
+import cors from 'cors'
 import databaseService from './services/database.services'
-import { log } from 'console'
 import { defaultErrorHandler } from './middlewares/error.middleware'
+import { createServer } from 'http'
+import { config } from 'dotenv'
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+  allowedHeaders: 'Content-Type,Authorization',
+  optionsSuccessStatus: 200
+}
+config()
 const app = express()
+const httpServer = createServer(app)
+const port = process.env.PORT || 4000
+app.use(cors(corsOptions))
 app.use(express.json())
-const port = 3000
 databaseService.connect()
 app.get('/', (req, res) => {
   res.send('Hello world')
