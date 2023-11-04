@@ -17,7 +17,7 @@ export const USERS_MESSAGES = {
   //confirmPassword
   CONFIRM_PASSWORD_IS_REQUIRED: 'Confirm password is required',
   CONFIRM_PASSWORD_MUST_BE_A_STRING: 'Confirm password must be a string',
-  CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50: 'Confirm length must be from 8 to 50',
+  CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50: 'Confirm password length must be from 8 to 50',
   CONFIRM_PASSWORD_MUST_BE_STRONG:
     'Confirm password must be at least 8 characters long and contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol',
   CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD: 'Confirm password must be the same as password',
@@ -41,5 +41,7 @@ export const USERS_MESSAGES = {
   CHECK_EMAIL_TO_RESET_PASSWORD: 'Check email to reset password',
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: 'Forgot password token is required',
   FORGOT_PASSWORD_TOKEN_IS_INCORRECT: 'Forgot password token is incorrect',
-  VERIFY_FORGOT_PASSWORD_TOKEN_SUCCESS: 'Verify forgot password token success'
+  VERIFY_FORGOT_PASSWORD_TOKEN_SUCCESS: 'Verify forgot password token success',
+  RESET_PASSWORD_SUCCESS: 'Reset password success',
+  GET_ME_SUCCESS: 'Get me success'
 } as const

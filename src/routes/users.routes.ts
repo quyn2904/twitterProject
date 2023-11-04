@@ -3,10 +3,12 @@ import { NextFunction, Router } from 'express'
 import {
   emailVerifyTokenController,
   forgotPasswordController,
+  getMeController,
   loginController,
   logoutController,
   registerController,
   resendEmailVerifyController,
+  resetPasswordController,
   verifyForgotPasswordTokenController
 } from '~/controllers/users.controllers'
 import {
@@ -16,6 +18,7 @@ import {
   loginValidator,
   refreshTokenValidator,
   registerValidator,
+  resetPasswordValidator,
   verifyForgotPasswordTokenValidator
 } from '~/middlewares/users.middlewares'
 const usersRouter = Router()
@@ -102,5 +105,21 @@ usersRouter.post(
   verifyForgotPasswordTokenValidator,
   wrapAsync(verifyForgotPasswordTokenController)
 )
+
+usersRouter.post(
+  `/reset-password`,
+  resetPasswordValidator,
+  verifyForgotPasswordTokenValidator,
+  wrapAsync(resetPasswordController)
+)
+
+/*
+des: get profile của user
+path: '/me'
+method: get
+Header: {Authorization: Bearer <access_token>}
+body: {}
+*/
+usersRouter.get('/me', accessTokenValidator, wrapAsync(getMeController))
 
 export default usersRouter
