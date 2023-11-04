@@ -5,6 +5,7 @@ import {
   RegisterReqBody,
   ResetPasswordReqBody,
   TokenPayload,
+  UpdateMeReqBody,
   VerifyEmailReqBody
 } from '~/models/requests/User.requests'
 import usersService from '~/services/users.services'
@@ -152,5 +153,17 @@ export const getMeController = async (req: Request, res: Response) => {
   return res.json({
     message: USERS_MESSAGES.GET_ME_SUCCESS,
     result: user
+  })
+}
+
+export const updateMeController = async (req: Request<ParamsDictionary, any, UpdateMeReqBody>, res: Response) => {
+  //muốn update thông tin của user thì cần user_id và các thông tin cần update
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { body } = req
+  // giờ mình sẽ update user thông qua user_id với body được cho
+  const result = await usersService.updateMe({ user_id, payload: body })
+  return res.json({
+    message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+    result
   })
 }
