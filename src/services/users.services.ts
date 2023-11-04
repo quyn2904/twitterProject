@@ -66,9 +66,10 @@ class UsersService {
     })
     const result = await databaseService.users.insertOne(
       new User({
-        _id: user_id,
-        email_verify_token,
         ...payload,
+        _id: user_id,
+        username: `user${user_id.toString()}`,
+        email_verify_token,
         date_of_birth: new Date(payload.date_of_birth),
         password: hashPassword(payload.password)
       })
@@ -219,6 +220,26 @@ class UsersService {
         }
       }
     )
+    return user
+  }
+
+  async getProfile(username: string) {
+    const user = await databaseService.users.findOne(
+      { username },
+      {
+        projection: {
+          password: 0,
+          email_verify_token: 0,
+          forgot_password_token: 0,
+          verify: 0,
+          create_at: 0,
+          updated_at: 0
+        }
+      }
+    )
+    if (!user) {
+      throw new ErrorWithStatus({ message: USERS_MESSAGES.USER_NOT_FOUND, status: HTTP_STATUS.NOT_FOUND })
+    }
     return user
   }
 }

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import {
+  GetProfileReqParams,
   LoginReqBody,
   LogoutReqBody,
   RegisterReqBody,
@@ -165,5 +166,16 @@ export const updateMeController = async (req: Request<ParamsDictionary, any, Upd
   return res.json({
     message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
     result
+  })
+}
+
+export const getProfileController = async (req: Request<GetProfileReqParams>, res: Response) => {
+  // muốn lấy thông tin của user thì cần username
+  const { username } = req.params
+  // vào database tìm user có username đó
+  const user = await usersService.getProfile(username)
+  return res.json({
+    message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
+    result: user
   })
 }
