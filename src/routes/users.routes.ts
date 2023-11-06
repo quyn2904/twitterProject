@@ -41,7 +41,7 @@ usersRouter.post('/login', loginValidator, wrapAsync(loginController))
 
 /*
 des: đăng ký
-path: /users/register
+path: /users/register 
 method: POST
 body: {email, password}
 */
