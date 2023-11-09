@@ -2,6 +2,7 @@ import { wrapAsync } from './../utils/handlers'
 import { NextFunction, Router } from 'express'
 import {
   emailVerifyTokenController,
+  followController,
   forgotPasswordController,
   getMeController,
   getProfileController,
@@ -17,6 +18,7 @@ import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
   accessTokenValidator,
   emailVerifyTokenValidator,
+  followValidator,
   forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
@@ -153,5 +155,14 @@ method: get
 không cần header vì, chưa đăng nhập cũng có thể xem
 */
 usersRouter.get('/:username', wrapAsync(getProfileController))
+
+/*
+des: Follow someone
+path: '/follow'
+method: post
+headers: {Authorization: Bearer <access_token>}
+body: {followed_user_id: string}
+*/
+usersRouter.post('/follow', accessTokenValidator, verifiedUserValidator, followValidator, wrapAsync(followController))
 
 export default usersRouter
