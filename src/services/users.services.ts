@@ -376,7 +376,7 @@ class UsersService {
         status: HTTP_STATUS.BAD_REQUEST
       })
     }
-    // kiểm tra xem database đã tồn tại trong database hay chưa?
+    // kiểm tra xem user đã tồn tại trong database hay chưa?
     const user = await databaseService.users.findOne({ email: userInfor.email })
     if (user) {
       const [access_token, refresh_token] = await this.signAccessAndRefreshToken({
