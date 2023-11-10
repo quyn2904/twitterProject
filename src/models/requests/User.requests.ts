@@ -56,5 +56,5 @@ export interface FollowReqBody {
 }
 
 export interface UnfollowReqParams extends ParamsDictionary {
-  followed_user_id: string
+  unfollowed_user_id: string
 }
