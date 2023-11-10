@@ -175,7 +175,7 @@ headers: {Authorization: Bearer <access_token>}
 vì method delete k truyền qua body, phải truyền qua param
 */
 usersRouter.delete(
-  '/unfollow/:user_id',
+  '/unfollow/:unfollowed_user_id',
   accessTokenValidator,
   verifiedUserValidator,
   unfollowValidator,
