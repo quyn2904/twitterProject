@@ -65,5 +65,7 @@ export const USERS_MESSAGES = {
   NOT_FOLLOWED: 'Not followed',
   UNFOLLOW_SUCCESS: 'Unfollow success',
   USERNAME_IS_INVALID: 'Username is invalid',
-  USERNAME_ALREADY_EXISTS: 'Username already exists'
+  USERNAME_ALREADY_EXISTS: 'Username already exists',
+  OLD_PASSWORD_IS_INCORRECT: 'Old password is incorrect',
+  CHANGE_PASSWORD_SUCCESS: 'Change password success'
 } as const

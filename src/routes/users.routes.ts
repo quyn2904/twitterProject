@@ -1,6 +1,7 @@
 import { wrapAsync } from './../utils/handlers'
 import { NextFunction, Router } from 'express'
 import {
+  changePasswordController,
   emailVerifyTokenController,
   followController,
   forgotPasswordController,
@@ -18,6 +19,7 @@ import {
 import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
   accessTokenValidator,
+  changePasswordValidator,
   emailVerifyTokenValidator,
   followValidator,
   forgotPasswordValidator,
@@ -180,6 +182,21 @@ usersRouter.delete(
   verifiedUserValidator,
   unfollowValidator,
   wrapAsync(unfollowController)
+)
+
+/*
+des: change password
+path: '/change-password'
+method: put
+headers: {Authorization: Bearer <access_token>}
+body: {old_password: string, new_password: string, confirm_new_password: string}
+*/
+usersRouter.put(
+  '/change-password',
+  accessTokenValidator,
+  verifiedUserValidator,
+  changePasswordValidator,
+  wrapAsync(changePasswordController)
 )
 
 export default usersRouter
