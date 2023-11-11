@@ -5,6 +5,8 @@ import databaseService from './services/database.services'
 import { defaultErrorHandler } from './middlewares/error.middleware'
 import { createServer } from 'http'
 import { config } from 'dotenv'
+import mediaRouter from './routes/medias.routes'
+import { initFolder } from './utils/file'
 
 const corsOptions = {
   origin: 'http://localhost:3000',
@@ -13,6 +15,9 @@ const corsOptions = {
   optionsSuccessStatus: 200
 }
 config()
+
+initFolder()
+
 const app = express()
 const httpServer = createServer(app)
 const port = process.env.PORT || 4000
@@ -25,6 +30,7 @@ app.get('/', (req, res) => {
 
 app.use('/users', usersRouter)
 //localhost:3000/users/tweets
+app.use('/medias', mediaRouter)
 
 app.use(defaultErrorHandler)
 
