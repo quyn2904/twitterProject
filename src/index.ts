@@ -7,8 +7,9 @@ import { createServer } from 'http'
 import { config } from 'dotenv'
 import mediaRouter from './routes/medias.routes'
 import { initFolder } from './utils/file'
-import { UPLOAD_DIR } from './constants/dirs'
+import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dirs'
 import staticRouter from './routes/static.routes'
+import { MongoClient } from 'mongodb'
 config()
 
 const corsOptions = {
@@ -25,7 +26,11 @@ const httpServer = createServer(app)
 const port = process.env.PORT || 4000
 app.use(cors(corsOptions))
 app.use(express.json())
-databaseService.connect()
+
+databaseService.connect().then(() => {
+  databaseService.indexUsers()
+})
+
 app.get('/', (req, res) => {
   res.send('Hello world')
 })
@@ -33,11 +38,10 @@ app.get('/', (req, res) => {
 app.use('/users', usersRouter)
 //localhost:3000/users/tweets
 app.use('/medias', mediaRouter)
-// app.use('/static', express.static(UPLOAD_DIR))
+// app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use('/static', staticRouter)
 
 app.use(defaultErrorHandler)
-
 app.listen(port, () => {
   console.log(`Project twitter này đang chạy trên post ${port}`)
 })
