@@ -1,22 +1,29 @@
 import path from 'path'
 import fs from 'fs'
 import { Request } from 'express'
-import formidable from 'formidable'
+import formidable, { File } from 'formidable'
 import { Files } from 'formidable'
+import { UPLOAD_TEMP_DIR } from '~/constants/dirs'
 
 export const initFolder = () => {
-  const uploadFolderPath = path.resolve('uploads')
   // fs
-  if (!fs.existsSync(uploadFolderPath)) {
-    fs.mkdirSync(uploadFolderPath, {
+  if (!fs.existsSync(UPLOAD_TEMP_DIR)) {
+    fs.mkdirSync(UPLOAD_TEMP_DIR, {
       recursive: true
     })
   }
 }
 
+export const getNameFromFullName = (filename: string) => {
+  const nameArr = filename.split('.')
+  nameArr.pop()
+  return nameArr.join('')
+}
+
+// hàm xử lý file mà client đã gửi l
 export const handleUploadSingleImage = async (req: Request) => {
   const form = formidable({
-    uploadDir: path.resolve('uploads'),
+    uploadDir: path.resolve(UPLOAD_TEMP_DIR),
     maxFields: 1,
     keepExtensions: true,
     maxFieldsSize: 300 * 1024, // 300KB
@@ -28,7 +35,7 @@ export const handleUploadSingleImage = async (req: Request) => {
       return valid
     }
   })
-  return new Promise<Files>((resolve, reject) => {
+  return new Promise<File>((resolve, reject) => {
     form.parse(req, (err, field, files) => {
       if (err) {
         return reject(err)
@@ -36,7 +43,7 @@ export const handleUploadSingleImage = async (req: Request) => {
       if (!files.image) {
         return reject(new Error('Image is empty'))
       }
-      return resolve(files)
+      return resolve((files.image as File[])[0])
     })
   })
 }

@@ -7,6 +7,7 @@ import { createServer } from 'http'
 import { config } from 'dotenv'
 import mediaRouter from './routes/medias.routes'
 import { initFolder } from './utils/file'
+config()
 
 const corsOptions = {
   origin: 'http://localhost:3000',
@@ -14,7 +15,6 @@ const corsOptions = {
   allowedHeaders: 'Content-Type,Authorization',
   optionsSuccessStatus: 200
 }
-config()
 
 initFolder()
 
