@@ -7,6 +7,8 @@ import { createServer } from 'http'
 import { config } from 'dotenv'
 import mediaRouter from './routes/medias.routes'
 import { initFolder } from './utils/file'
+import { UPLOAD_DIR } from './constants/dirs'
+import staticRouter from './routes/static.routes'
 config()
 
 const corsOptions = {
@@ -31,6 +33,8 @@ app.get('/', (req, res) => {
 app.use('/users', usersRouter)
 //localhost:3000/users/tweets
 app.use('/medias', mediaRouter)
+// app.use('/static', express.static(UPLOAD_DIR))
+app.use('/static', staticRouter)
 
 app.use(defaultErrorHandler)
 

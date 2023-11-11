@@ -21,12 +21,12 @@ export const getNameFromFullName = (filename: string) => {
 }
 
 // hàm xử lý file mà client đã gửi l
-export const handleUploadSingleImage = async (req: Request) => {
+export const uploadImage = async (req: Request) => {
   const form = formidable({
     uploadDir: path.resolve(UPLOAD_TEMP_DIR),
-    maxFields: 1,
+    maxFields: 4,
     keepExtensions: true,
-    maxFieldsSize: 300 * 1024, // 300KB
+    maxFieldsSize: 300 * 1024 * 4, // 300KB
     filter: function ({ name, originalFilename, mimetype }) {
       const valid = name === 'image' && Boolean(mimetype?.includes('image/'))
       if (!valid) {
@@ -35,7 +35,7 @@ export const handleUploadSingleImage = async (req: Request) => {
       return valid
     }
   })
-  return new Promise<File>((resolve, reject) => {
+  return new Promise<File[]>((resolve, reject) => {
     form.parse(req, (err, field, files) => {
       if (err) {
         return reject(err)
@@ -43,7 +43,7 @@ export const handleUploadSingleImage = async (req: Request) => {
       if (!files.image) {
         return reject(new Error('Image is empty'))
       }
-      return resolve((files.image as File[])[0])
+      return resolve(files.image as File[])
     })
   })
 }

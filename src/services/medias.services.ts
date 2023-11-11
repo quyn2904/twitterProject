@@ -2,22 +2,32 @@ import { Request } from 'express'
 import sharp from 'sharp'
 import fs from 'fs'
 import { UPLOAD_DIR } from '~/constants/dirs'
-import { getNameFromFullName, handleUploadSingleImage } from '~/utils/file'
+import { getNameFromFullName, uploadImage } from '~/utils/file'
 import { isProduction } from '~/constants/config'
+import { Media } from '~/models/Other'
+import { MediaType } from '~/constants/enums'
 
 class MediasService {
-  async handleUploadSingleImage(req: Request) {
+  async handleUploadImage(req: Request) {
     // lưu ảnh vào trong uploads/temp
-    const file = await handleUploadSingleImage(req)
+    const files = await uploadImage(req)
     // xử lý file bằng sharp giúp tối ưu hình ảnh
-    const newFilename = getNameFromFullName(file.newFilename) + '.jpg'
-    const newPath = UPLOAD_DIR + '/' + newFilename
-    const info = await sharp(file.filepath).jpeg().toFile(newPath)
-    // xóa file trong temp
-    fs.unlinkSync(file.filepath)
-    return isProduction
-      ? `${process.env.HOST}/medias/${newFilename}`
-      : `http://localhost:${process.env.PORT}/uploads/${newFilename}`
+    const result: Media[] = await Promise.all(
+      files.map(async (file) => {
+        const newFilename = getNameFromFullName(file.newFilename) + '.jpg'
+        const newPath = UPLOAD_DIR + '/' + newFilename
+        const info = await sharp(file.filepath).jpeg().toFile(newPath)
+        // xóa file trong temp
+        fs.unlinkSync(file.filepath)
+        return {
+          url: isProduction
+            ? `${process.env.HOST}/medias/${newFilename}`
+            : `http://localhost:${process.env.PORT}/static/image/${newFilename}`,
+          type: MediaType.Image
+        }
+      })
+    )
+    return result
   }
 }
 
