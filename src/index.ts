@@ -10,6 +10,7 @@ import { initFolder } from './utils/file'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dirs'
 import staticRouter from './routes/static.routes'
 import { MongoClient } from 'mongodb'
+import tweetsRouter from './routes/tweets.routes'
 config()
 
 const corsOptions = {
@@ -29,6 +30,8 @@ app.use(express.json())
 
 databaseService.connect().then(() => {
   databaseService.indexUsers()
+  databaseService.indexRefreshTokens()
+  databaseService.indexFollowers()
 })
 
 app.get('/', (req, res) => {
@@ -40,6 +43,7 @@ app.use('/users', usersRouter)
 app.use('/medias', mediaRouter)
 // app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use('/static', staticRouter)
+app.use('/tweets', tweetsRouter)
 
 app.use(defaultErrorHandler)
 app.listen(port, () => {

@@ -1,5 +1,5 @@
 import { log } from 'console'
-import { EntityError } from './../models/Errors'
+import { EntityError } from '../models/Errors'
 import { Request, Response, NextFunction } from 'express'
 import { validationResult, ValidationChain } from 'express-validator'
 import { RunnableValidationChains } from 'express-validator/src/middlewares/schema'

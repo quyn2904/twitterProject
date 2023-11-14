@@ -11,7 +11,7 @@ import { REGEX_USERNAME } from '~/constants/regex'
 import { TokenPayload } from '~/models/requests/User.requests'
 import databaseService from '~/services/database.services'
 import usersService from '~/services/users.services'
-import { validate } from '~/utils/Validation'
+import { validate } from '~/utils/validation'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 
